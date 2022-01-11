@@ -1,0 +1,14 @@
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\SahkaWin.Main.resources
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.Properties.Resources.resources
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\SahkaWin.csproj.GenerateResource.cache
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\SahkaWin.csproj.CoreCompileInputs.cache
+D:\Future Tech\PROG\Sahka\obj\Debug\SahkaWin.csproj.AssemblyReference.cache
+D:\Future Tech\PROG\Sahka\obj\Debug\SahkaWin.Main.resources
+D:\Future Tech\PROG\Sahka\obj\Debug\SahkaWin.csproj.GenerateResource.cache
+D:\Future Tech\PROG\Sahka\obj\Debug\SahkaWin.csproj.CoreCompileInputs.cache
+D:\Future Tech\PROG\Sahka\bin\Debug\Sahka.exe.config
+D:\Future Tech\PROG\Sahka\bin\Debug\Sahka.exe
+D:\Future Tech\PROG\Sahka\bin\Debug\Sahka.pdb
+D:\Future Tech\PROG\Sahka\obj\Debug\SahkaWin.Properties.Resources.resources
+D:\Future Tech\PROG\Sahka\obj\Debug\Sahka.exe
+D:\Future Tech\PROG\Sahka\obj\Debug\Sahka.pdb

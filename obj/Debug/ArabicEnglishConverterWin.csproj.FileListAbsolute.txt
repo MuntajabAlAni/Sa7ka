@@ -1,0 +1,10 @@
+D:\Future Tech\PROG\ArabicEnglishConverterWin\bin\Debug\ArabicEnglishConverterWin.exe.config
+D:\Future Tech\PROG\ArabicEnglishConverterWin\bin\Debug\ArabicEnglishConverterWin.exe
+D:\Future Tech\PROG\ArabicEnglishConverterWin\bin\Debug\ArabicEnglishConverterWin.pdb
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.Main.resources
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.Properties.Resources.resources
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.csproj.GenerateResource.cache
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.csproj.CoreCompileInputs.cache
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.exe
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.pdb
+D:\Future Tech\PROG\ArabicEnglishConverterWin\obj\Debug\ArabicEnglishConverterWin.csproj.AssemblyReference.cache
