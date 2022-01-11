@@ -151,6 +151,8 @@ namespace Sa7kaWin
                 return;
 
             Properties.Settings.Default.KeyString = _keyString;
+            Properties.Settings.Default.Save();
+
             _selectedKey = (Keys)Enum.Parse(typeof(Keys), _keyString);
 
             Task.Run(() =>
