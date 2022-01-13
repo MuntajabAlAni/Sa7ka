@@ -108,7 +108,6 @@ namespace Sa7kaWin
                             Clipboard.SetText(Convert(Clipboard.GetText()));
                             SendKeys.SendWait("^V");
                             NotifyIcon.ShowBalloonTip(1000);
-
                         }
                     }
                 }
