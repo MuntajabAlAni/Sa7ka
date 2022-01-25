@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,7 +18,32 @@ namespace Sa7kaWin
         private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
         private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
 
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorPos(out Point pt);
 
+        [DllImport("user32.dll", EntryPoint = "WindowFromPoint", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr WindowFromPoint(Point pt);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessageW")]
+        public static extern int SendMessageW([InAttribute] System.IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+        public const int WM_GETTEXT = 13;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern IntPtr GetFocus();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern int GetWindowThreadProcessId(int handle, out int processId);
+
+        [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        internal static extern int AttachThreadInput(int idAttach, int idAttachTo, bool fAttach);
+        [DllImport("kernel32.dll")]
+        internal static extern int GetCurrentThreadId();
+
+        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern int GetWindowText(IntPtr hWnd, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpString, int nMaxCount);
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
         [DllImport("user32.dll")]
@@ -27,10 +53,21 @@ namespace Sa7kaWin
         {
             InitializeComponent();
         }
+
+        private void NotifyIconBalloonPopUp(string title, string text, int timeout)
+        {
+            NotifyIcon.BalloonTipTitle = title;
+            NotifyIcon.BalloonTipText = text;
+            NotifyIcon.ShowBalloonTip(timeout);
+        }
         private void Main_Load(object sender, EventArgs e)
         {
             try
             {
+                this.Hide();
+                NotifyIcon.Visible = true;
+                NotifyIconBalloonPopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
+
                 this.Text += " " + Application.ProductVersion;
                 _keyString = TxtShortcut.Text = Properties.Settings.Default.KeyString;
                 _selectedKey = (Keys)Enum.Parse(typeof(Keys), _keyString);
@@ -80,7 +117,7 @@ namespace Sa7kaWin
         {
             if (this.WindowState == FormWindowState.Minimized)
             {
-                Hide();
+                this.Hide();
                 NotifyIcon.Visible = true;
             }
         }
@@ -89,6 +126,34 @@ namespace Sa7kaWin
             Show();
             this.WindowState = FormWindowState.Normal;
             NotifyIcon.Visible = false;
+        }
+        private string GetTextFromFocusedControl()
+        {
+            try
+            {
+                int activeWinPtr = GetForegroundWindow().ToInt32();
+                int activeThreadId = 0;
+                activeThreadId = GetWindowThreadProcessId(activeWinPtr, out int processId);
+                int currentThreadId = GetCurrentThreadId();
+                if (activeThreadId != currentThreadId)
+                    AttachThreadInput(activeThreadId, currentThreadId, true);
+                IntPtr activeCtrlId = GetFocus();
+
+                return GetText(activeCtrlId);
+            }
+            catch (Exception exp)
+            {
+                return exp.Message;
+            }
+        }
+        private string GetText(IntPtr handle)
+        {
+            int maxLength = 100;
+            IntPtr buffer = Marshal.AllocHGlobal((maxLength + 1) * 2);
+            SendMessageW(handle, WM_GETTEXT, maxLength, buffer);
+            string w = Marshal.PtrToStringUni(buffer);
+            Marshal.FreeHGlobal(buffer);
+            return w;
         }
         protected override void WndProc(ref Message m)
         {
@@ -103,11 +168,20 @@ namespace Sa7kaWin
                     {
                         if (key == _selectedKey)
                         {
-                            SendKeys.SendWait("^A");
-                            SendKeys.SendWait("^X");
-                            Clipboard.SetText(Convert(Clipboard.GetText()));
-                            SendKeys.SendWait("^V");
-                            NotifyIcon.ShowBalloonTip(1000);
+                            //SendKeys.SendWait("+{HOME}");
+                            SendKeys.SendWait("\x1");
+                            string selectedText = GetTextFromFocusedControl();
+                            //if (string.IsNullOrEmpty(selectedText))
+                            
+                            
+                            //SendKeys.SendWait("^A");
+                            //SendKeys.SendWait("^X");
+                            //SendKeyDown(KeyCode.CONTROL);
+                            //SendKeyPress(KeyCode.KEY_A);
+                            Clipboard.SetText(Convert(/*Clipboard.GetText()*/selectedText));
+                            SendKeys.SendWait("^{V}");
+                            SendKeys.Send("%+");
+                            NotifyIconBalloonPopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
                         }
                     }
                 }
@@ -192,7 +266,6 @@ namespace Sa7kaWin
             Show();
             NotifyIcon.Visible = false;
         }
-
         private void CbStartApplicationOnStartUp_CheckedChanged(object sender, EventArgs e)
         {
             try
@@ -224,6 +297,11 @@ namespace Sa7kaWin
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+
         }
     }
 }

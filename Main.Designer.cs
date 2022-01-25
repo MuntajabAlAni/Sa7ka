@@ -44,6 +44,8 @@ namespace Sa7kaWin
             this.BtnChangeShortcut = new System.Windows.Forms.Button();
             this.LblChanged = new System.Windows.Forms.Label();
             this.CbStartApplicationOnStartUp = new System.Windows.Forms.CheckBox();
+            this.TxtTest = new System.Windows.Forms.TextBox();
+            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.ContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -72,8 +74,6 @@ namespace Sa7kaWin
             // 
             // NotifyIcon
             // 
-            this.NotifyIcon.BalloonTipText = "We Saved You ..\r\nSa7ka Killed !";
-            this.NotifyIcon.BalloonTipTitle = "Converted !";
             this.NotifyIcon.ContextMenuStrip = this.ContextMenuStrip;
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Text = "Sa7ka";
@@ -149,9 +149,9 @@ namespace Sa7kaWin
             // 
             this.BtnChangeShortcut.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.BtnChangeShortcut.ForeColor = System.Drawing.Color.Black;
-            this.BtnChangeShortcut.Location = new System.Drawing.Point(62, 61);
+            this.BtnChangeShortcut.Location = new System.Drawing.Point(181, 61);
             this.BtnChangeShortcut.Name = "BtnChangeShortcut";
-            this.BtnChangeShortcut.Size = new System.Drawing.Size(219, 32);
+            this.BtnChangeShortcut.Size = new System.Drawing.Size(128, 32);
             this.BtnChangeShortcut.TabIndex = 0;
             this.BtnChangeShortcut.Text = "Change Shortcut";
             this.BtnChangeShortcut.UseVisualStyleBackColor = true;
@@ -162,7 +162,7 @@ namespace Sa7kaWin
             this.LblChanged.AutoSize = true;
             this.LblChanged.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold);
             this.LblChanged.ForeColor = System.Drawing.Color.ForestGreen;
-            this.LblChanged.Location = new System.Drawing.Point(135, 96);
+            this.LblChanged.Location = new System.Drawing.Point(103, 68);
             this.LblChanged.Name = "LblChanged";
             this.LblChanged.Size = new System.Drawing.Size(72, 19);
             this.LblChanged.TabIndex = 1;
@@ -181,6 +181,25 @@ namespace Sa7kaWin
             this.CbStartApplicationOnStartUp.UseVisualStyleBackColor = true;
             this.CbStartApplicationOnStartUp.CheckedChanged += new System.EventHandler(this.CbStartApplicationOnStartUp_CheckedChanged);
             // 
+            // TxtTest
+            // 
+            this.TxtTest.BackColor = System.Drawing.Color.White;
+            this.TxtTest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TxtTest.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
+            this.TxtTest.Location = new System.Drawing.Point(83, 95);
+            this.TxtTest.Name = "TxtTest";
+            this.TxtTest.ReadOnly = true;
+            this.TxtTest.Size = new System.Drawing.Size(200, 34);
+            this.TxtTest.TabIndex = 2;
+            this.TxtTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TxtTest.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
+            // 
+            // Timer
+            // 
+            this.Timer.Enabled = true;
+            this.Timer.Interval = 1000;
+            this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -188,6 +207,7 @@ namespace Sa7kaWin
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(343, 203);
             this.Controls.Add(this.CbStartApplicationOnStartUp);
+            this.Controls.Add(this.TxtTest);
             this.Controls.Add(this.TxtShortcut);
             this.Controls.Add(this.LblChanged);
             this.Controls.Add(this.LblState);
@@ -205,6 +225,7 @@ namespace Sa7kaWin
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Sa7ka";
             this.TopMost = true;
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Load += new System.EventHandler(this.Main_Load);
             this.Resize += new System.EventHandler(this.Main_Resize);
@@ -229,6 +250,8 @@ namespace Sa7kaWin
         private System.Windows.Forms.Button BtnChangeShortcut;
         private System.Windows.Forms.Label LblChanged;
         private System.Windows.Forms.CheckBox CbStartApplicationOnStartUp;
+        private System.Windows.Forms.TextBox TxtTest;
+        private System.Windows.Forms.Timer Timer;
     }
 }
 
