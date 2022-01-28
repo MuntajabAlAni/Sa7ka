@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sa7kaWin
+namespace Sa7kaWin.Enums
 {
+    [Flags]
     public enum KeyModifier
     {
         None = 0,
         Alt = 1,
         Control = 2,
         Shift = 4,
-        WinKey = 8
+        Win = 8
     }
 }

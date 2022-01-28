@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Sa7kaWin
+namespace Sa7kaWin.Extensions
 {
     public static class ControlExtensions
     {
@@ -18,9 +18,6 @@ namespace Sa7kaWin
             else if (!Control.IsDisposed)
             {
                 Action();
-            }
-            else
-            {
             }
         }
     }

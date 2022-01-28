@@ -1,4 +1,6 @@
 ﻿using IWshRuntimeLibrary;
+using Sa7kaWin.Enums;
+using Sa7kaWin.Extensions;
 using System;
 using System.Drawing;
 using System.IO;
@@ -13,11 +15,16 @@ namespace Sa7kaWin
     public partial class Main : Form
     {
         private bool _start = true;
+
         private string _keyString;
         private Keys _selectedKey;
+
         private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
         private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
 
+        private readonly GlobalKeyboardHook _hook;
+
+        #region DLL Imports
         [DllImport("user32.dll")]
         public static extern bool GetCursorPos(out Point pt);
 
@@ -48,25 +55,29 @@ namespace Sa7kaWin
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        #endregion
 
         public Main()
         {
             InitializeComponent();
+            _hook = new GlobalKeyboardHook();
+            _hook.HookedKeys.Add(Keys.A);
+            _hook.HookedKeys.Add(Keys.B);
+            _hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(gkh_KeyUp);
         }
 
-        private void NotifyIconBalloonPopUp(string title, string text, int timeout)
+        void gkh_KeyUp(object sender, KeyPressedEventArgs e)
         {
-            NotifyIcon.BalloonTipTitle = title;
-            NotifyIcon.BalloonTipText = text;
-            NotifyIcon.ShowBalloonTip(timeout);
+            TxtTest.Text = e.Modifier.ToString() + e.Key.ToString();
         }
+
         private void Main_Load(object sender, EventArgs e)
         {
             try
             {
                 this.Hide();
                 NotifyIcon.Visible = true;
-                NotifyIconBalloonPopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
+                NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
 
                 this.Text += " " + Application.ProductVersion;
                 _keyString = TxtShortcut.Text = Properties.Settings.Default.KeyString;
@@ -121,7 +132,7 @@ namespace Sa7kaWin
                 NotifyIcon.Visible = true;
             }
         }
-        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Show();
             this.WindowState = FormWindowState.Normal;
@@ -172,8 +183,8 @@ namespace Sa7kaWin
                             SendKeys.SendWait("\x1");
                             string selectedText = GetTextFromFocusedControl();
                             //if (string.IsNullOrEmpty(selectedText))
-                            
-                            
+
+
                             //SendKeys.SendWait("^A");
                             //SendKeys.SendWait("^X");
                             //SendKeyDown(KeyCode.CONTROL);
@@ -181,7 +192,7 @@ namespace Sa7kaWin
                             Clipboard.SetText(Convert(/*Clipboard.GetText()*/selectedText));
                             SendKeys.SendWait("^{V}");
                             SendKeys.Send("%+");
-                            NotifyIconBalloonPopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
+                            NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
                         }
                     }
                 }
@@ -195,7 +206,7 @@ namespace Sa7kaWin
         {
             UnregisterHotKey(this.Handle, 0);
         }
-        private void TxtShortcut_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -308,4 +319,3 @@ namespace Sa7kaWin
 //todo: not working on all programs ???
 //todo: put in all characters with and without shift
 //todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
-//todo: convert to .NET Core

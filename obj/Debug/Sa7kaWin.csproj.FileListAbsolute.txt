@@ -11,6 +11,9 @@ D:\Future Tech\PROG\Sahka\obj\Debug\Sa7ka.pdb
 D:\Future Tech\PROG\Sa7ka\bin\Debug\Sa7ka.exe.config
 D:\Future Tech\PROG\Sa7ka\bin\Debug\Sa7ka.exe
 D:\Future Tech\PROG\Sa7ka\bin\Debug\Sa7ka.pdb
+D:\Future Tech\PROG\Sa7ka\bin\Debug\Dapper.dll
+D:\Future Tech\PROG\Sa7ka\bin\Debug\System.Data.SQLite.dll
+D:\Future Tech\PROG\Sa7ka\bin\Debug\Dapper.xml
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.csproj.AssemblyReference.cache
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Interop.IWshRuntimeLibrary.dll
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.csproj.ResolveComReference.cache
@@ -18,5 +21,6 @@ D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.Main.resources
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.Properties.Resources.resources
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.csproj.GenerateResource.cache
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.csproj.CoreCompileInputs.cache
+D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7kaWin.csproj.CopyComplete
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7ka.exe
 D:\Future Tech\PROG\Sa7ka\obj\Debug\Sa7ka.pdb

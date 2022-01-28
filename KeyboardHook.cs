@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sa7kaWin.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -8,143 +9,234 @@ using System.Windows.Forms;
 
 namespace Sa7kaWin
 {
-    public sealed class KeyboardHook : IDisposable
+    /// <summary>
+    /// A class that manages a global low level keyboard hook
+    /// </summary>
+    class GlobalKeyboardHook
     {
-        // Registers a hot key with Windows.
-        [DllImport("user32.dll")]
-        private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-        // Unregisters the hot key with Windows.
-        [DllImport("user32.dll")]
-        private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        #region Constant, Structure and Delegate Definitions
 
         /// <summary>
-        /// Represents the window that is used internally to get the messages.
+        /// defines the callback type for the hook
         /// </summary>
-        private class Window : NativeWindow, IDisposable
+        public delegate int KeyboardHookProc(int code, int wParam, ref KeyboardHookStruct lParam);
+
+        public struct KeyboardHookStruct
         {
-            private static readonly int WM_HOTKEY = 0x0312;
+            public int vkCode;
+            public int scanCode;
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
+        }
 
-            public Window()
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x100;
+        private const int WM_SYSKEYDOWN = 0x104;
+
+        #endregion
+
+        /// <summary>
+        /// The collections of keys to watch for
+        /// </summary>
+        public List<Keys> HookedKeys = new List<Keys>();
+
+        /// <summary>
+        /// Handle to the hook, need this to unhook and call the next hook
+        /// </summary>
+        private IntPtr _hook = IntPtr.Zero;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GlobalKeyboardHook"/> class and installs the keyboard hook.
+        /// </summary>
+        public GlobalKeyboardHook()
+        {
+            this.Hook();
+        }
+
+        /// <summary>
+        /// Releases unmanaged resources and performs other cleanup operations before the
+        /// <see cref="GlobalKeyboardHook"/> is reclaimed by garbage collection and uninstalls the keyboard hook.
+        /// </summary>
+        ~GlobalKeyboardHook()
+        {
+            this.Unhook();
+        }
+
+        /// <summary>
+        /// Installs the global hook
+        /// </summary>
+        public void Hook()
+        {
+            IntPtr hInstance = LoadLibrary("User32");
+            this._hook = SetWindowsHookEx(WH_KEYBOARD_LL, this.HookProc, hInstance, 0);
+        }
+
+        /// <summary>
+        /// Uninstalls the global hook
+        /// </summary>
+        public void Unhook()
+        {
+            UnhookWindowsHookEx(this._hook);
+        }
+
+        /// <summary>
+        /// The callback for the keyboard hook
+        /// </summary>
+        /// <param name="code">The hook code, if it isn't >= 0, the function shouldn't do anyting</param>
+        /// <param name="wParam">The event type</param>
+        /// <param name="lParam">The keyhook event information</param>
+        /// <returns></returns>
+        private int HookProc(int code, int wParam, ref KeyboardHookStruct lParam)
+        {
+            if (code >= 0)
             {
-                // create the handle for the window.
-                this.CreateHandle(new CreateParams());
-            }
+                var key = (Keys)lParam.vkCode;
 
-            /// <summary>
-            /// Overridden to get the notifications.
-            /// </summary>
-            /// <param name="m"></param>
-            protected override void WndProc(ref Message m)
-            {
-                base.WndProc(ref m);
-
-                // check if we got a hot key pressed.
-                if (m.Msg == WM_HOTKEY)
+                if (this.HookedKeys.Contains(key))
                 {
-                    // get the keys.
-                    Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
-                    ModifierKeys modifier = (ModifierKeys)((int)m.LParam & 0xFFFF);
+                    var handler = this.KeyPressed;
 
-                    // invoke the event to notify the parent.
-                    KeyPressed?.Invoke(this, new KeyPressedEventArgs(modifier, key));
+                    if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) && (handler != null))
+                    {
+                        KeyModifier mods = 0;
+
+                        if (Keyboard.IsKeyDown(Keys.Control) || Keyboard.IsKeyDown(Keys.ControlKey) ||
+                            Keyboard.IsKeyDown(Keys.LControlKey) || Keyboard.IsKeyDown(Keys.RControlKey))
+                        {
+                            mods |= KeyModifier.Control;
+                        }
+                        if (Keyboard.IsKeyDown(Keys.Shift) || Keyboard.IsKeyDown(Keys.ShiftKey) ||
+                            Keyboard.IsKeyDown(Keys.LShiftKey) || Keyboard.IsKeyDown(Keys.RShiftKey))
+                        {
+                            mods |= KeyModifier.Shift;
+                        }
+                        if (Keyboard.IsKeyDown(Keys.LWin) || Keyboard.IsKeyDown(Keys.RWin))
+                        {
+                            mods |= KeyModifier.Win;
+                        }
+                        if (Keyboard.IsKeyDown(Keys.Alt) || Keyboard.IsKeyDown(Keys.Menu) ||
+                            Keyboard.IsKeyDown(Keys.LMenu) || Keyboard.IsKeyDown(Keys.RMenu))
+                        {
+                            mods |= KeyModifier.Alt;
+                        }
+
+                        handler(this, new KeyPressedEventArgs(mods, key));
+                    }
                 }
             }
 
-            public event EventHandler<KeyPressedEventArgs> KeyPressed;
-
-            #region IDisposable Members
-
-            public void Dispose()
-            {
-                this.DestroyHandle();
-            }
-
-            #endregion
+            return CallNextHookEx(this._hook, code, wParam, ref lParam);
         }
 
-        private readonly Window _window = new Window();
-        private int _currentId;
-
-        public KeyboardHook()
-        {
-            // register the event of the inner native window.
-            _window.KeyPressed += delegate (object sender, KeyPressedEventArgs args)
-            {
-                KeyPressed?.Invoke(this, args);
-            };
-        }
-
-        /// <summary>
-        /// Registers a hot key in the system.
-        /// </summary>
-        /// <param name="modifier">The modifiers that are associated with the hot key.</param>
-        /// <param name="key">The key itself that is associated with the hot key.</param>
-        public void RegisterHotKey(ModifierKeys modifier, Keys key)
-        {
-            // increment the counter.
-            _currentId++;
-
-            // register the hot key.
-            if (!RegisterHotKey(_window.Handle, _currentId, (uint)modifier, (uint)key))
-                throw new InvalidOperationException("Couldn’t register the hot key.");
-        }
-
-        /// <summary>
-        /// A hot key has been pressed.
-        /// </summary>
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
 
-        #region IDisposable Members
+        #region DLL imports
 
-        public void Dispose()
-        {
-            // unregister all the registered hot keys.
-            for (int i = _currentId; i > 0; i--)
-            {
-                UnregisterHotKey(_window.Handle, i);
-            }
+        /// <summary>
+        /// Sets the windows hook, do the desired event, one of hInstance or threadId must be non-null
+        /// </summary>
+        /// <param name="idHook">The id of the event you want to hook</param>
+        /// <param name="callback">The callback.</param>
+        /// <param name="hInstance">The handle you want to attach the event to, can be null</param>
+        /// <param name="threadId">The thread you want to attach the event to, can be null</param>
+        /// <returns>a handle to the desired hook</returns>
+        [DllImport("user32.dll")]
+        private static extern IntPtr SetWindowsHookEx(int idHook, KeyboardHookProc callback, IntPtr hInstance, uint threadId);
 
-            // dispose the inner native window.
-            _window.Dispose();
-        }
+        /// <summary>
+        /// Unhooks the windows hook.
+        /// </summary>
+        /// <param name="hInstance">The hook handle that was returned from SetWindowsHookEx</param>
+        /// <returns>True if successful, false otherwise</returns>
+        [DllImport("user32.dll")]
+        private static extern bool UnhookWindowsHookEx(IntPtr hInstance);
+
+        /// <summary>
+        /// Calls the next hook.
+        /// </summary>
+        /// <param name="idHook">The hook id</param>
+        /// <param name="nCode">The hook code</param>
+        /// <param name="wParam">The wparam.</param>
+        /// <param name="lParam">The lparam.</param>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
+        private static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref KeyboardHookStruct lParam);
+
+        /// <summary>
+        /// Loads the library.
+        /// </summary>
+        /// <param name="lpFileName">Name of the library</param>
+        /// <returns>A handle to the library</returns>
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr LoadLibrary(string lpFileName);
 
         #endregion
+    }
+
+    static class Keyboard
+    {
+        [Flags]
+        private enum KeyStates
+        {
+            None = 0,
+            Down = 1,
+            Toggled = 2
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        private static extern short GetKeyState(int keyCode);
+
+        private static KeyStates GetKeyState(Keys key)
+        {
+            KeyStates state = KeyStates.None;
+
+            short retVal = GetKeyState((int)key);
+
+            //If the high-order bit is 1, the key is down
+            //otherwise, it is up.
+            if ((retVal & 0x8000) == 0x8000)
+                state |= KeyStates.Down;
+
+            //If the low-order bit is 1, the key is toggled.
+            if ((retVal & 1) == 1)
+                state |= KeyStates.Toggled;
+
+            return state;
+        }
+
+        public static bool IsKeyDown(Keys key)
+        {
+            return KeyStates.Down == (GetKeyState(key) & KeyStates.Down);
+        }
+
+        public static bool IsKeyToggled(Keys key)
+        {
+            return KeyStates.Toggled == (GetKeyState(key) & KeyStates.Toggled);
+        }
     }
 
     /// <summary>
     /// Event Args for the event that is fired after the hot key has been pressed.
     /// </summary>
-    public class KeyPressedEventArgs : EventArgs
+    class KeyPressedEventArgs : EventArgs
     {
-        private readonly ModifierKeys _modifier;
-        private readonly Keys _key;
-
-        internal KeyPressedEventArgs(ModifierKeys modifier, Keys key)
+        internal KeyPressedEventArgs(KeyModifier modifier, Keys key)
         {
-            _modifier = modifier;
-            _key = key;
+            this.Modifier = modifier;
+            this.Key = key;
+
+            this.Ctrl = (modifier & KeyModifier.Control) != 0;
+            this.Shift = (modifier & KeyModifier.Shift) != 0;
+            this.Win = (modifier & KeyModifier.Win) != 0;
+            this.Alt = (modifier & KeyModifier.Alt) != 0;
         }
 
-        public ModifierKeys Modifier
-        {
-            get { return _modifier; }
-        }
-
-        public Keys Key
-        {
-            get { return _key; }
-        }
-    }
-
-    /// <summary>
-    /// The enumeration of possible modifiers.
-    /// </summary>
-    [Flags]
-    public enum ModifierKeys : uint
-    {
-        Alt = 1,
-        Control = 2,
-        Shift = 4,
-        Win = 8
+        public KeyModifier Modifier { get; private set; }
+        public Keys Key { get; private set; }
+        public readonly bool Ctrl;
+        public readonly bool Shift;
+        public readonly bool Win;
+        public readonly bool Alt;
     }
 }

@@ -234,7 +234,7 @@ namespace Sa7kaWin
         private System.Windows.Forms.Label LblState;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.Label LblStateTitle;
-        private System.Windows.Forms.ContextMenuStrip ContextMenuStrip;
+        private new System.Windows.Forms.ContextMenuStrip ContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem ShowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem QuitToolStripMenuItem;
