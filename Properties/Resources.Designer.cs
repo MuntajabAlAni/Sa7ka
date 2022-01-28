@@ -59,5 +59,25 @@ namespace Sa7kaWin.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] Sa7ka {
+            get {
+                object obj = ResourceManager.GetObject("Sa7ka", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SQLite_Interop {
+            get {
+                object obj = ResourceManager.GetObject("SQLite_Interop", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
