@@ -41,7 +41,7 @@ namespace Sa7kaWin.DataAccess
                 }
             }
         }
-        public async Task<T> ExecuteScalarAsync<T>(string sql, DynamicParameters parameters)
+        public async Task<T> ExecuteScalarAsync<T>(string sql, object parameters)
         {
             using (SQLiteConnection connection = new SQLiteConnection(ConnectionString()))
             {

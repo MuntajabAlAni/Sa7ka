@@ -22,17 +22,5 @@ namespace Sa7kaWin.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Oem5")]
-        public string KeyString {
-            get {
-                return ((string)(this["KeyString"]));
-            }
-            set {
-                this["KeyString"] = value;
-            }
-        }
     }
 }
