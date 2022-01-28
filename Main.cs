@@ -298,11 +298,6 @@ namespace Sa7kaWin
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void Timer_Tick(object sender, EventArgs e)
-        {
-
-        }
     }
 }
 
@@ -313,3 +308,4 @@ namespace Sa7kaWin
 //todo: not working on all programs ???
 //todo: put in all characters with and without shift
 //todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
+//todo: convert to .NET Core

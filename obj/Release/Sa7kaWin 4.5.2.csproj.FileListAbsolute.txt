@@ -1,0 +1,12 @@
+D:\Future Tech\PROG\Sa7ka .NET Framework\bin\Release\Sa7ka.exe.config
+D:\Future Tech\PROG\Sa7ka .NET Framework\bin\Release\Sa7ka.exe
+D:\Future Tech\PROG\Sa7ka .NET Framework\bin\Release\Sa7ka.pdb
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin 4.5.2.csproj.AssemblyReference.cache
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Interop.IWshRuntimeLibrary.dll
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin 4.5.2.csproj.ResolveComReference.cache
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin.Main.resources
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin.Properties.Resources.resources
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin 4.5.2.csproj.GenerateResource.cache
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7kaWin 4.5.2.csproj.CoreCompileInputs.cache
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7ka.exe
+D:\Future Tech\PROG\Sa7ka .NET Framework\obj\Release\Sa7ka.pdb

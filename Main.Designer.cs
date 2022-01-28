@@ -45,7 +45,6 @@ namespace Sa7kaWin
             this.LblChanged = new System.Windows.Forms.Label();
             this.CbStartApplicationOnStartUp = new System.Windows.Forms.CheckBox();
             this.TxtTest = new System.Windows.Forms.TextBox();
-            this.Timer = new System.Windows.Forms.Timer(this.components);
             this.ContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -194,12 +193,6 @@ namespace Sa7kaWin
             this.TxtTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.TxtTest.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
             // 
-            // Timer
-            // 
-            this.Timer.Enabled = true;
-            this.Timer.Interval = 1000;
-            this.Timer.Tick += new System.EventHandler(this.Timer_Tick);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -251,7 +244,6 @@ namespace Sa7kaWin
         private System.Windows.Forms.Label LblChanged;
         private System.Windows.Forms.CheckBox CbStartApplicationOnStartUp;
         private System.Windows.Forms.TextBox TxtTest;
-        private System.Windows.Forms.Timer Timer;
     }
 }
 
