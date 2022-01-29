@@ -98,7 +98,6 @@ namespace Sa7kaWin
                 MessageBox.Show(ex.Message);
             }
         }
-
         private async void Main_Load(object sender, EventArgs e)
         {
             try
