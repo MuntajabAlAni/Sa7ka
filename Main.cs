@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -76,18 +77,23 @@ namespace Sa7kaWin
                         e.Modifier.ToString() == _settings.KeyModifier3)
                     {
                         //SendKeys.SendWait("+{HOME}");
-                        //SendKeys.SendWait("\x1");        
-                        SendKeys.SendWait("^A");
+                        //SendKeys.SendWait("\x1");
+                        SendKeys.SendWait("^{HOME}");
+                        SendKeys.SendWait("^+{END}");
+                        //Thread.Sleep(100);
                         string selectedText = GetTextFromFocusedControl();
+                        //Thread.Sleep(100);
                         //if (string.IsNullOrEmpty(selectedText))
-
-
                         //SendKeys.SendWait("^A");
-                        //SendKeys.SendWait("^X");
+                        
+                        //Thread.Sleep(100);
                         //SendKeyDown(KeyCode.CONTROL);
                         //SendKeyPress(KeyCode.KEY_A);
                         Clipboard.SetText(Convert(/*Clipboard.GetText()*/selectedText));
+                        Thread.Sleep(100);
+                        SendKeys.SendWait("{BS}");
                         SendKeys.SendWait("^{V}");
+                        //Thread.Sleep(100);
                         SendKeys.Send("%+");
                         NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
                     }
