@@ -1,12 +1,16 @@
 ﻿using IWshRuntimeLibrary;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using System.Windows.Forms;
+using Sa7kaWin.Extensions;
 
 namespace Sa7kaWin
 {
@@ -19,32 +23,6 @@ namespace Sa7kaWin
         private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
 
         [DllImport("user32.dll")]
-        public static extern bool GetCursorPos(out Point pt);
-
-        [DllImport("user32.dll", EntryPoint = "WindowFromPoint", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern IntPtr WindowFromPoint(Point pt);
-
-        [DllImport("user32.dll", EntryPoint = "SendMessageW")]
-        public static extern int SendMessageW([InAttribute] System.IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
-        public const int WM_GETTEXT = 13;
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        internal static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        internal static extern IntPtr GetFocus();
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern int GetWindowThreadProcessId(int handle, out int processId);
-
-        [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        internal static extern int AttachThreadInput(int idAttach, int idAttachTo, bool fAttach);
-        [DllImport("kernel32.dll")]
-        internal static extern int GetCurrentThreadId();
-
-        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern int GetWindowText(IntPtr hWnd, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpString, int nMaxCount);
-        [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
@@ -54,19 +32,13 @@ namespace Sa7kaWin
             InitializeComponent();
         }
 
-        private void NotifyIconBalloonPopUp(string title, string text, int timeout)
-        {
-            NotifyIcon.BalloonTipTitle = title;
-            NotifyIcon.BalloonTipText = text;
-            NotifyIcon.ShowBalloonTip(timeout);
-        }
         private void Main_Load(object sender, EventArgs e)
         {
             try
             {
                 this.Hide();
                 NotifyIcon.Visible = true;
-                NotifyIconBalloonPopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
+                NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
 
                 this.Text += " " + Application.ProductVersion;
                 _keyString = TxtShortcut.Text = Properties.Settings.Default.KeyString;
@@ -121,39 +93,11 @@ namespace Sa7kaWin
                 NotifyIcon.Visible = true;
             }
         }
-        private void NotifyIcon_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Show();
             this.WindowState = FormWindowState.Normal;
             NotifyIcon.Visible = false;
-        }
-        private string GetTextFromFocusedControl()
-        {
-            try
-            {
-                int activeWinPtr = GetForegroundWindow().ToInt32();
-                int activeThreadId = 0;
-                activeThreadId = GetWindowThreadProcessId(activeWinPtr, out int processId);
-                int currentThreadId = GetCurrentThreadId();
-                if (activeThreadId != currentThreadId)
-                    AttachThreadInput(activeThreadId, currentThreadId, true);
-                IntPtr activeCtrlId = GetFocus();
-
-                return GetText(activeCtrlId);
-            }
-            catch (Exception exp)
-            {
-                return exp.Message;
-            }
-        }
-        private string GetText(IntPtr handle)
-        {
-            int maxLength = 100;
-            IntPtr buffer = Marshal.AllocHGlobal((maxLength + 1) * 2);
-            SendMessageW(handle, WM_GETTEXT, maxLength, buffer);
-            string w = Marshal.PtrToStringUni(buffer);
-            Marshal.FreeHGlobal(buffer);
-            return w;
         }
         protected override void WndProc(ref Message m)
         {
@@ -168,20 +112,18 @@ namespace Sa7kaWin
                     {
                         if (key == _selectedKey)
                         {
-                            //SendKeys.SendWait("+{HOME}");
-                            SendKeys.SendWait("\x1");
-                            string selectedText = GetTextFromFocusedControl();
-                            //if (string.IsNullOrEmpty(selectedText))
-                            
-                            
-                            //SendKeys.SendWait("^A");
-                            //SendKeys.SendWait("^X");
-                            //SendKeyDown(KeyCode.CONTROL);
-                            //SendKeyPress(KeyCode.KEY_A);
-                            Clipboard.SetText(Convert(/*Clipboard.GetText()*/selectedText));
-                            SendKeys.SendWait("^{V}");
-                            SendKeys.Send("%+");
-                            NotifyIconBalloonPopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
+                            SendKeys.Send("^{HOME}");
+                            Thread.Sleep(500);
+                            SendKeys.Send("^x");
+                            Thread.Sleep(100);
+
+                            if (Clipboard.ContainsText())
+                            {
+                                var text = Convert(Clipboard.GetText());
+                                SendKeys.SendWait(text);
+                            }
+
+                            NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
                         }
                     }
                 }
@@ -195,7 +137,7 @@ namespace Sa7kaWin
         {
             UnregisterHotKey(this.Handle, 0);
         }
-        private void TxtShortcut_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
@@ -308,4 +250,4 @@ namespace Sa7kaWin
 //todo: not working on all programs ???
 //todo: put in all characters with and without shift
 //todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
-//todo: convert to .NET Core
+//todo: ظ   and   ض

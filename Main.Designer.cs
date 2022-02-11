@@ -187,7 +187,6 @@ namespace Sa7kaWin
             this.TxtTest.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
             this.TxtTest.Location = new System.Drawing.Point(83, 95);
             this.TxtTest.Name = "TxtTest";
-            this.TxtTest.ReadOnly = true;
             this.TxtTest.Size = new System.Drawing.Size(200, 34);
             this.TxtTest.TabIndex = 2;
             this.TxtTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -234,7 +233,7 @@ namespace Sa7kaWin
         private System.Windows.Forms.Label LblState;
         private System.Windows.Forms.NotifyIcon NotifyIcon;
         private System.Windows.Forms.Label LblStateTitle;
-        private System.Windows.Forms.ContextMenuStrip ContextMenuStrip;
+        private new System.Windows.Forms.ContextMenuStrip ContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem ShowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem AboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem QuitToolStripMenuItem;

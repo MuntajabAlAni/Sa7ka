@@ -19,3 +19,7 @@ D:\Future Tech\PROG\Sa7ka\obj\Release\Sa7ka.exe
 D:\Future Tech\PROG\Sa7ka\obj\Release\Sa7ka.pdb
 D:\Future Tech\PROG\Sa7ka\obj\Release\Interop.IWshRuntimeLibrary.dll
 D:\Future Tech\PROG\Sa7ka\obj\Release\Sa7kaWin.csproj.ResolveComReference.cache
+D:\Future Tech\PROG\Sa7ka\bin\Release\Dapper.dll
+D:\Future Tech\PROG\Sa7ka\bin\Release\System.Data.SQLite.dll
+D:\Future Tech\PROG\Sa7ka\bin\Release\Dapper.xml
+D:\Future Tech\PROG\Sa7ka\obj\Release\Sa7kaWin.csproj.CopyComplete
