@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Automation;
 using System.Windows.Forms;
 using Sa7kaWin.Extensions;
+using Sa7kaWin.Enums;
 
 namespace Sa7kaWin
 {
@@ -113,14 +114,14 @@ namespace Sa7kaWin
                         if (key == _selectedKey)
                         {
                             SendKeys.Send("^{HOME}");
-                            Thread.Sleep(500);
+                            Thread.Sleep(800);
                             SendKeys.Send("^x");
                             Thread.Sleep(100);
 
                             if (Clipboard.ContainsText())
                             {
-                                var text = Convert(Clipboard.GetText());
-                                SendKeys.SendWait(text);
+                                SendKeys.SendWait(Convert(Clipboard.GetText()));
+                                SendKeys.Send("%+");
                             }
 
                             NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
@@ -135,6 +136,12 @@ namespace Sa7kaWin
         }
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.WindowState = FormWindowState.Minimized;
+            }
+            else
             UnregisterHotKey(this.Handle, 0);
         }
         private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
@@ -197,7 +204,7 @@ namespace Sa7kaWin
         }
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Close();
+            Application.Exit();
         }
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -248,6 +255,6 @@ namespace Sa7kaWin
 //todo: fix Sa7ka only the selected text
 //todo: Salam to سلام can be done by (1)
 //todo: not working on all programs ???
-//todo: put in all characters with and without shift
+//todo: put all characters with and without shift in my Arrays
 //todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
 //todo: ظ   and   ض
