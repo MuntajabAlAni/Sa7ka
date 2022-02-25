@@ -9,11 +9,19 @@ namespace Sa7kaWin.Extensions
 {
     public static class NotifyIconExtensions
     {
+<<<<<<< HEAD
         public static void PopUp(this NotifyIcon notifyIcon, string title, string text, int timeout)
         {
             notifyIcon.BalloonTipTitle = title;
             notifyIcon.BalloonTipText = text;
             notifyIcon.ShowBalloonTip(timeout);
+=======
+        public static void PopUp(this NotifyIcon notify, string title, string text, int timeout)
+        {
+            notify.BalloonTipTitle = title;
+            notify.BalloonTipText = text;
+            notify.ShowBalloonTip(timeout);
+>>>>>>> noHookTest
         }
     }
 }

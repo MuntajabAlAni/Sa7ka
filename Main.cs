@@ -3,6 +3,7 @@ using Sa7kaWin.Enums;
 using Sa7kaWin.Extensions;
 using Sa7kaWin.Models;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -10,12 +11,16 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Automation;
 using System.Windows.Forms;
+using Sa7kaWin.Extensions;
+using Sa7kaWin.Enums;
 
 namespace Sa7kaWin
 {
     public partial class Main : Form
     {
+<<<<<<< HEAD
         private bool _start = true;
 
         private SettingInfo _settings;
@@ -33,10 +38,11 @@ namespace Sa7kaWin
         [DllImport("user32.dll", EntryPoint = "WindowFromPoint", CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern IntPtr WindowFromPoint(Point pt);
 
+=======
+>>>>>>> noHookTest
         [DllImport("user32.dll", EntryPoint = "SendMessageW")]
         public static extern int SendMessageW([InAttribute] System.IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
         public const int WM_GETTEXT = 13;
-
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         internal static extern IntPtr GetForegroundWindow();
 
@@ -51,8 +57,13 @@ namespace Sa7kaWin
         [DllImport("kernel32.dll")]
         internal static extern int GetCurrentThreadId();
 
-        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern int GetWindowText(IntPtr hWnd, [Out, MarshalAs(UnmanagedType.LPTStr)] StringBuilder lpString, int nMaxCount);
+
+        private bool _start = true;
+        private string _keyString;
+        private Keys _selectedKey;
+        private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
+        private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
+
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
         [DllImport("user32.dll")]
@@ -66,6 +77,7 @@ namespace Sa7kaWin
             _hook = new GlobalKeyboardHook();
         }
 
+<<<<<<< HEAD
         void KeyPressed(object sender, KeyPressedEventArgs e)
         {
             try
@@ -105,10 +117,14 @@ namespace Sa7kaWin
             }
         }
         private async void Main_Load(object sender, EventArgs e)
+=======
+        private void Main_Load(object sender, EventArgs e)
+>>>>>>> noHookTest
         {
             try
             {
                 this.Hide();
+<<<<<<< HEAD
 
                 _settings = await _settingRepository.GetSettings();
 
@@ -129,6 +145,10 @@ namespace Sa7kaWin
 
                     await _settingRepository.InsertSettings(_settings);
                 }
+=======
+                NotifyIcon.Visible = true;
+                NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
+>>>>>>> noHookTest
 
                 this.Text += " " + Application.ProductVersion;
 
@@ -241,11 +261,63 @@ namespace Sa7kaWin
             Marshal.FreeHGlobal(buffer);
             return w;
         }
+<<<<<<< HEAD
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
             
         }
         private void Key_KeyDown(object sender, KeyEventArgs e)
+=======
+        protected override void WndProc(ref Message m)
+        {
+            try
+            {
+                base.WndProc(ref m);
+
+                if (m.Msg == 0x0312)
+                {
+                    Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
+                    if (_start)
+                    {
+                        if (key == _selectedKey)
+                        {
+                            if (GetTextFromFocusedControl() == string.Empty)
+                            {
+                                SendKeys.Send("^{HOME}");
+                                Thread.Sleep(800);
+                            }
+
+                            SendKeys.Send("^x");
+                            Thread.Sleep(100);
+
+                            if (Clipboard.ContainsText())
+                            {
+                                SendKeys.SendWait(Convert(Clipboard.GetText()));
+                                SendKeys.Send("%+");
+                            }
+
+                            NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.WindowState = FormWindowState.Minimized;
+            }
+            else
+                UnregisterHotKey(this.Handle, 0);
+        }
+        private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
+>>>>>>> noHookTest
         {
             switch (e.KeyCode)
             {
@@ -334,7 +406,7 @@ namespace Sa7kaWin
         }
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Close();
+            Application.Exit();
         }
         private void AboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -385,5 +457,11 @@ namespace Sa7kaWin
 //todo: fix Sa7ka only the selected text
 //todo: Salam to سلام can be done by (1)
 //todo: not working on all programs ???
+<<<<<<< HEAD
 //todo: put in all characters with and without shift
 //todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
+=======
+//todo: put all characters with and without shift in my Arrays
+//todo: 1-ar to en .. 2-en to ar .. 3-each char from another .. 4-Translate
+//todo: ظ   and   ض
+>>>>>>> noHookTest

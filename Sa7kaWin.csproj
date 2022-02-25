@@ -54,22 +54,34 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="SettingRepository.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="DataAccess\SQLiteDataAccess.cs" />
     <Compile Include="Enums\KeyModifier.cs" />
     <Compile Include="Extensions\NotifyIconExtensions.cs" />
     <Compile Include="KeyboardHook.cs" />
+=======
+    <Compile Include="Extensions\ControlExtensions.cs" />
+    <Compile Include="DataAccess\SQLiteDataAccess.cs" />
+    <Compile Include="Extensions\NotifyIconExtensions.cs" />
+    <Compile Include="Enums\KeyModifier.cs" />
+>>>>>>> noHookTest
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+<<<<<<< HEAD
     <Compile Include="Models\SettingInfo.cs" />
+=======
+>>>>>>> noHookTest
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Main.resx">
@@ -113,6 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SQLite.Interop.dll" />
+<<<<<<< HEAD
+=======
+  </ItemGroup>
+  <ItemGroup>
+>>>>>>> noHookTest
     <Content Include="Sa7ka.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
