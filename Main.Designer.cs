@@ -138,7 +138,6 @@ namespace Sa7kaWin
             this.TxtKey1.Size = new System.Drawing.Size(92, 34);
             this.TxtKey1.TabIndex = 2;
             this.TxtKey1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.TxtKey1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Key_KeyDown);
             // 
             // LblShortcutTitle
             // 
@@ -199,7 +198,6 @@ namespace Sa7kaWin
             this.TxtKey2.Size = new System.Drawing.Size(92, 34);
             this.TxtKey2.TabIndex = 2;
             this.TxtKey2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.TxtKey2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Key_KeyDown);
             // 
             // TxtKey3
             // 
@@ -212,7 +210,6 @@ namespace Sa7kaWin
             this.TxtKey3.Size = new System.Drawing.Size(92, 34);
             this.TxtKey3.TabIndex = 2;
             this.TxtKey3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.TxtKey3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Key_KeyDown);
             // 
             // TxtKeyModifier1
             // 
@@ -277,7 +274,6 @@ namespace Sa7kaWin
             // 
             // LblPlus3
             // 
-<<<<<<< HEAD
             this.LblPlus3.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
             this.LblPlus3.ForeColor = System.Drawing.Color.Black;
             this.LblPlus3.Location = new System.Drawing.Point(143, 137);
@@ -286,17 +282,6 @@ namespace Sa7kaWin
             this.LblPlus3.TabIndex = 1;
             this.LblPlus3.Text = "+";
             this.LblPlus3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-=======
-            this.TxtTest.BackColor = System.Drawing.Color.White;
-            this.TxtTest.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.TxtTest.Font = new System.Drawing.Font("Segoe UI Semibold", 15F, System.Drawing.FontStyle.Bold);
-            this.TxtTest.Location = new System.Drawing.Point(83, 95);
-            this.TxtTest.Name = "TxtTest";
-            this.TxtTest.Size = new System.Drawing.Size(200, 34);
-            this.TxtTest.TabIndex = 2;
-            this.TxtTest.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.TxtTest.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
->>>>>>> noHookTest
             // 
             // Main
             // 
