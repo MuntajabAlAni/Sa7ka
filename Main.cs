@@ -17,6 +17,24 @@ namespace Sa7kaWin
 {
     public partial class Main : Form
     {
+        [DllImport("user32.dll", EntryPoint = "SendMessageW")]
+        public static extern int SendMessageW([InAttribute] System.IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+        public const int WM_GETTEXT = 13;
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        internal static extern IntPtr GetFocus();
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern int GetWindowThreadProcessId(int handle, out int processId);
+
+        [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        internal static extern int AttachThreadInput(int idAttach, int idAttachTo, bool fAttach);
+        [DllImport("kernel32.dll")]
+        internal static extern int GetCurrentThreadId();
+
+
         private bool _start = true;
         private string _keyString;
         private Keys _selectedKey;
@@ -100,6 +118,34 @@ namespace Sa7kaWin
             this.WindowState = FormWindowState.Normal;
             NotifyIcon.Visible = false;
         }
+        private string GetTextFromFocusedControl()
+        {
+            try
+            {
+                int activeWinPtr = GetForegroundWindow().ToInt32();
+                int activeThreadId = 0;
+                activeThreadId = GetWindowThreadProcessId(activeWinPtr, out int processId);
+                int currentThreadId = GetCurrentThreadId();
+                if (activeThreadId != currentThreadId)
+                    AttachThreadInput(activeThreadId, currentThreadId, true);
+                IntPtr activeCtrlId = GetFocus();
+
+                return GetText(activeCtrlId);
+            }
+            catch (Exception exp)
+            {
+                return exp.Message;
+            }
+        }
+        private string GetText(IntPtr handle)
+        {
+            int maxLength = 100;
+            IntPtr buffer = Marshal.AllocHGlobal((maxLength + 1) * 2);
+            SendMessageW(handle, WM_GETTEXT, maxLength, buffer);
+            string w = Marshal.PtrToStringUni(buffer);
+            Marshal.FreeHGlobal(buffer);
+            return w;
+        }
         protected override void WndProc(ref Message m)
         {
             try
@@ -113,8 +159,12 @@ namespace Sa7kaWin
                     {
                         if (key == _selectedKey)
                         {
-                            SendKeys.Send("^{HOME}");
-                            Thread.Sleep(800);
+                            if (GetTextFromFocusedControl() == string.Empty)
+                            {
+                                SendKeys.Send("^{HOME}");
+                                Thread.Sleep(800);
+                            }
+
                             SendKeys.Send("^x");
                             Thread.Sleep(100);
 
@@ -142,7 +192,7 @@ namespace Sa7kaWin
                 this.WindowState = FormWindowState.Minimized;
             }
             else
-            UnregisterHotKey(this.Handle, 0);
+                UnregisterHotKey(this.Handle, 0);
         }
         private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
         {
