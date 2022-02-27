@@ -84,7 +84,7 @@ namespace Sa7kaWin
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Text = "Sa7ka";
             this.NotifyIcon.Visible = true;
-            this.NotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon_MouseDoubleClick);
+            this.NotifyIcon.Click += new System.EventHandler(this.NotifyIcon_Click);
             // 
             // ContextMenuStrip
             // 
@@ -138,6 +138,7 @@ namespace Sa7kaWin
             this.TxtKey1.Size = new System.Drawing.Size(92, 34);
             this.TxtKey1.TabIndex = 2;
             this.TxtKey1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TxtKey1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
             // 
             // LblShortcutTitle
             // 
@@ -198,6 +199,7 @@ namespace Sa7kaWin
             this.TxtKey2.Size = new System.Drawing.Size(92, 34);
             this.TxtKey2.TabIndex = 2;
             this.TxtKey2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TxtKey2.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
             // 
             // TxtKey3
             // 
@@ -210,6 +212,7 @@ namespace Sa7kaWin
             this.TxtKey3.Size = new System.Drawing.Size(92, 34);
             this.TxtKey3.TabIndex = 2;
             this.TxtKey3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.TxtKey3.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtShortcut_KeyDown);
             // 
             // TxtKeyModifier1
             // 

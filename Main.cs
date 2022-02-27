@@ -18,58 +18,46 @@ namespace Sa7kaWin
 {
     public partial class Main : Form
     {
+        #region ImportDlls
         [DllImport("user32.dll", EntryPoint = "SendMessageW")]
         public static extern int SendMessageW([InAttribute] System.IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
         public const int WM_GETTEXT = 13;
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         internal static extern IntPtr GetForegroundWindow();
-
         [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
         internal static extern IntPtr GetFocus();
-
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern int GetWindowThreadProcessId(int handle, out int processId);
-
         [DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
         internal static extern int AttachThreadInput(int idAttach, int idAttachTo, bool fAttach);
         [DllImport("kernel32.dll")]
         internal static extern int GetCurrentThreadId();
-
-        private bool _start = true;
-        private readonly string _keyString;
-        private readonly Keys _selectedKey;
-        private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
-        private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
-
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
         [DllImport("user32.dll")]
         private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        #endregion
+
+        private bool _start = true;
+        private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
+        private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
+
+        private readonly SettingRepository _settingRepository;
+        private SettingInfo _settings;
 
         public Main()
         {
             InitializeComponent();
-            //_settingRepository = new SettingRepository();
-            //_hook = new GlobalKeyboardHook();
+            _settingRepository = new SettingRepository();
         }
-
         private void Main_Load(object sender, EventArgs e)
         {
             try
             {
-                this.Hide();
-                NotifyIcon.Visible = true;
-                NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
-
                 this.Text += " " + Application.ProductVersion;
+                this.Hide();
 
-                CbStartApplicationOnStartUp.Checked = System.IO.File.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\" +
-        Application.ProductName + ".lnk");
-
-                //LoadSettings();
-                //UpdateHookedKeys();
-
-                //_hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(KeyPressed);
+                LoadSettings();
 
                 NotifyIcon.Visible = true;
                 NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
@@ -79,24 +67,39 @@ namespace Sa7kaWin
                 MessageBox.Show(ex.Message);
             }
         }
-        //private void UpdateHookedKeys()
-        //{
+        private async void LoadSettings()
+        {
+            _settings = await _settingRepository.GetSettings();
 
-        //    _hook.HookedKeys.Clear();
-        //    _hook.HookedKeys.Add(_settings.Key1Value);
-        //    _hook.HookedKeys.Add(_settings.Key2Value);
-        //    _hook.HookedKeys.Add(_settings.Key3Value);
-        //}
-        //private void LoadSettings()
-        //{
-        //    TxtKey1.Text = _settings.Key1;
-        //    TxtKey2.Text = _settings.Key2;
-        //    TxtKey3.Text = _settings.Key3;
+            if (_settings is null)
+            {
+                _settings = new SettingInfo
+                {
+                    OnStartUp = CbStartApplicationOnStartUp.Checked = false,
+                    Key1 = TxtKey1.Text = "F1",
+                    KeyModifier1 = TxtKeyModifier1.Text = "ShiftKey"
+                };
 
-        //    TxtKeyModifier1.Text = _settings.KeyModifier1;
-        //    TxtKeyModifier2.Text = _settings.KeyModifier2;
-        //    TxtKeyModifier3.Text = _settings.KeyModifier3;
-        //}
+                await _settingRepository.InsertSettings(_settings);
+
+                RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
+                return;
+            }
+
+            CbStartApplicationOnStartUp.Checked = _settings.OnStartUp;
+
+            TxtKey1.Text = _settings.Key1;
+            TxtKey2.Text = _settings.Key2;
+            TxtKey3.Text = _settings.Key3;
+
+            TxtKeyModifier1.Text = _settings.KeyModifier1;
+            TxtKeyModifier2.Text = _settings.KeyModifier2;
+            TxtKeyModifier3.Text = _settings.KeyModifier3;
+
+            RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
+            RegisterHotKey(this.Handle, 1, (int)_settings.KeyModifier2Value, _settings.Key2Value.GetHashCode());
+            RegisterHotKey(this.Handle, 2, (int)_settings.KeyModifier3Value, _settings.Key3Value.GetHashCode());
+        }
         private void BtnStart_Click(object sender, EventArgs e)
         {
             if (_start)
@@ -138,12 +141,6 @@ namespace Sa7kaWin
                 NotifyIcon.Visible = true;
             }
         }
-        private void NotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            Show();
-            this.WindowState = FormWindowState.Normal;
-            NotifyIcon.Visible = false;
-        }
         private string GetTextFromFocusedControl()
         {
             try
@@ -183,25 +180,22 @@ namespace Sa7kaWin
                     Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                     if (_start)
                     {
-                        if (key == _selectedKey)
+                        if (GetTextFromFocusedControl() == string.Empty)
                         {
-                            if (GetTextFromFocusedControl() == string.Empty)
-                            {
-                                SendKeys.Send("^{HOME}");
-                                Thread.Sleep(800);
-                            }
-
-                            SendKeys.Send("^x");
-                            Thread.Sleep(100);
-
-                            if (Clipboard.ContainsText())
-                            {
-                                SendKeys.SendWait(Convert(Clipboard.GetText()));
-                                SendKeys.Send("%+");
-                            }
-
-                            NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
+                            SendKeys.Send("^{HOME}");
+                            Thread.Sleep(800);
                         }
+
+                        SendKeys.Send("^x");
+                        Thread.Sleep(100);
+
+                        if (Clipboard.ContainsText())
+                        {
+                            SendKeys.SendWait(Convert(Clipboard.GetText()));
+                            SendKeys.Send("%+");
+                        }
+
+                        NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
                     }
                 }
             }
@@ -216,9 +210,12 @@ namespace Sa7kaWin
             {
                 e.Cancel = true;
                 this.WindowState = FormWindowState.Minimized;
+                return;
             }
-            else
-                UnregisterHotKey(this.Handle, 0);
+
+            UnregisterHotKey(this.Handle, 0);
+            UnregisterHotKey(this.Handle, 1);
+            UnregisterHotKey(this.Handle, 2);
         }
         private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
         {
@@ -282,25 +279,36 @@ namespace Sa7kaWin
         {
             try
             {
-                //if (TxtKey1.Text == string.Empty)
-                //    return;
+                _settings = new SettingInfo()
+                {
+                    Key1 = TxtKey1.Text,
+                    Key2 = TxtKey2.Text,
+                    Key3 = TxtKey3.Text,
+                    KeyModifier1 = TxtKeyModifier1.Text,
+                    KeyModifier2 = TxtKeyModifier2.Text,
+                    KeyModifier3 = TxtKeyModifier3.Text,
+                    OnStartUp = CbStartApplicationOnStartUp.Checked,
+                };
 
-                //Properties.Settings.Default.KeyString = _keyString;
-                //Properties.Settings.Default.Save();
+                UpdateSettings();
 
-                //_selectedKey = (Keys)Enum.Parse(typeof(Keys), _keyString);
+                UnregisterHotKey(this.Handle, 0);
+                UnregisterHotKey(this.Handle, 1);
+                UnregisterHotKey(this.Handle, 2);
 
-                //Task.Run(() =>
-                //{
-                //    LblSaved.Invoke(async () =>
-                //    {
-                //        LblSaved.Visible = true;
-                //        await Task.Delay(2500);
-                //        LblSaved.Visible = false;
-                //    });
-                //});
-                //UnregisterHotKey(this.Handle, 0);
-                //RegisterHotKey(this.Handle, 0, (int)KeyModifier.Shift, _selectedKey.GetHashCode());
+                RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
+                RegisterHotKey(this.Handle, 1, (int)_settings.KeyModifier2Value, _settings.Key2Value.GetHashCode());
+                RegisterHotKey(this.Handle, 2, (int)_settings.KeyModifier3Value, _settings.Key3Value.GetHashCode());
+
+                Task.Run(() =>
+                {
+                    LblSaved.Invoke(async () =>
+                    {
+                        LblSaved.Visible = true;
+                        await Task.Delay(2500);
+                        LblSaved.Visible = false;
+                    });
+                });
             }
             catch (Exception ex)
             {
@@ -325,6 +333,8 @@ namespace Sa7kaWin
             try
             {
                 string startUpFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+                _settings.OnStartUp = CbStartApplicationOnStartUp.Checked;
+                UpdateSettings();
 
                 if (CbStartApplicationOnStartUp.Checked)
                 {
@@ -351,6 +361,16 @@ namespace Sa7kaWin
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+        private async void UpdateSettings()
+        {
+            await _settingRepository.UpdateSettings(_settings);
+        }
+        private void NotifyIcon_Click(object sender, EventArgs e)
+        {
+            Show();
+            this.WindowState = FormWindowState.Normal;
+            NotifyIcon.Visible = false;
         }
     }
 }

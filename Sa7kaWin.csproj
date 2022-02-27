@@ -64,7 +64,6 @@
     <Compile Include="DataAccess\SQLiteDataAccess.cs" />
     <Compile Include="Extensions\NotifyIconExtensions.cs" />
     <Compile Include="Enums\KeyModifier.cs" />
-    <Compile Include="KeyboardHook.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,7 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\SQLite.Interop.dll" />
-
   </ItemGroup>
   <ItemGroup>
     <Content Include="Sa7ka.ico" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sa7kaWin.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,13 @@ namespace Sa7kaWin.Models
         public int Id { get; set; }
         public bool OnStartUp { get; set; }
         public string KeyModifier1 { get; set; }
+        public KeyModifier KeyModifier1Value
+        {
+            get
+            {
+                return (KeyModifier)Enum.Parse(typeof(KeyModifier), KeyModifier1);
+            }
+        }
         public string Key1 { get; set; }
         public Keys Key1Value
         {
@@ -21,6 +29,13 @@ namespace Sa7kaWin.Models
             }
         }
         public string KeyModifier2 { get; set; }
+        public KeyModifier KeyModifier2Value
+        {
+            get
+            {
+                return (KeyModifier)Enum.Parse(typeof(KeyModifier), KeyModifier2);
+            }
+        }
         public string Key2 { get; set; }
         public Keys Key2Value
         {
@@ -30,6 +45,13 @@ namespace Sa7kaWin.Models
             }
         }
         public string KeyModifier3 { get; set; }
+        public KeyModifier KeyModifier3Value
+        {
+            get
+            {
+                return (KeyModifier)Enum.Parse(typeof(KeyModifier), KeyModifier3);
+            }
+        }
         public string Key3 { get; set; }
         public Keys Key3Value
         {
