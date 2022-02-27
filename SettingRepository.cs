@@ -24,30 +24,30 @@ namespace Sa7kaWin
             var result = await _sqliteDataAccess.QueryAsync<SettingInfo>(query);
             return result.FirstOrDefault();
         }
-        public async Task<int> InsertSettings(SettingInfo settings)
-        {
-            string command = @"INSERT INTO Settings (
-                         OnStartUp,
-                         KeyModifier1,
-                         Key1,
-                         KeyModifier2,
-                         Key2,
-                         KeyModifier3,
-                         Key3
-                     )
-                     VALUES (
-                         @OnStartUp,
-                         @KeyModifier1,
-                         @Key1,
-                         @KeyModifier2,
-                         @Key2,
-                         @KeyModifier3,
-                         @Key3
-                     );
-                     SELECT 1;";
+        //public async Task<int> InsertSettings(SettingInfo settings)
+        //{
+        //    string command = @"INSERT INTO Settings (
+        //                 OnStartUp,
+        //                 KeyModifier1,
+        //                 Key1,
+        //                 KeyModifier2,
+        //                 Key2,
+        //                 KeyModifier3,
+        //                 Key3
+        //             )
+        //             VALUES (
+        //                 @OnStartUp,
+        //                 @KeyModifier1,
+        //                 @Key1,
+        //                 @KeyModifier2,
+        //                 @Key2,
+        //                 @KeyModifier3,
+        //                 @Key3
+        //             );
+        //             SELECT 1;";
 
-            return await _sqliteDataAccess.ExecuteScalarAsync<int>(command,settings);
-        }
+        //    return await _sqliteDataAccess.ExecuteScalarAsync<int>(command,settings);
+        //}
         public async Task<int> UpdateSettings(SettingInfo settings)
         {
             string command = @"UPDATE Settings SET

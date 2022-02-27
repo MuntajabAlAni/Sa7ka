@@ -71,21 +71,6 @@ namespace Sa7kaWin
         {
             _settings = await _settingRepository.GetSettings();
 
-            if (_settings is null)
-            {
-                _settings = new SettingInfo
-                {
-                    OnStartUp = CbStartApplicationOnStartUp.Checked = false,
-                    Key1 = TxtKey1.Text = "F1",
-                    KeyModifier1 = TxtKeyModifier1.Text = "ShiftKey"
-                };
-
-                await _settingRepository.InsertSettings(_settings);
-
-                RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
-                return;
-            }
-
             CbStartApplicationOnStartUp.Checked = _settings.OnStartUp;
 
             TxtKey1.Text = _settings.Key1;
@@ -96,9 +81,7 @@ namespace Sa7kaWin
             TxtKeyModifier2.Text = _settings.KeyModifier2;
             TxtKeyModifier3.Text = _settings.KeyModifier3;
 
-            RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
-            RegisterHotKey(this.Handle, 1, (int)_settings.KeyModifier2Value, _settings.Key2Value.GetHashCode());
-            RegisterHotKey(this.Handle, 2, (int)_settings.KeyModifier3Value, _settings.Key3Value.GetHashCode());
+            RegisterKeys();
         }
         private void BtnStart_Click(object sender, EventArgs e)
         {
@@ -118,6 +101,23 @@ namespace Sa7kaWin
                 BtnStart.ForeColor = Color.Crimson;
                 _start = true;
             }
+        }
+        private void RegisterKeys()
+        {
+            if (_settings.Key1 is string && _settings.Key1 != string.Empty)
+                RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
+
+            if (_settings.Key2 is string && _settings.Key2 != string.Empty)
+                RegisterHotKey(this.Handle, 1, (int)_settings.KeyModifier2Value, _settings.Key2Value.GetHashCode());
+
+            if (_settings.Key3 is string && _settings.Key3 != string.Empty)
+                RegisterHotKey(this.Handle, 2, (int)_settings.KeyModifier3Value, _settings.Key3Value.GetHashCode());
+        }
+        private void UnregisterKeys()
+        {
+            UnregisterHotKey(this.Handle, 0);
+            UnregisterHotKey(this.Handle, 1);
+            UnregisterHotKey(this.Handle, 2);
         }
         static string Convert(string input)
         {
@@ -213,9 +213,7 @@ namespace Sa7kaWin
                 return;
             }
 
-            UnregisterHotKey(this.Handle, 0);
-            UnregisterHotKey(this.Handle, 1);
-            UnregisterHotKey(this.Handle, 2);
+            UnregisterKeys();
         }
         private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
         {
@@ -291,14 +289,8 @@ namespace Sa7kaWin
                 };
 
                 UpdateSettings();
-
-                UnregisterHotKey(this.Handle, 0);
-                UnregisterHotKey(this.Handle, 1);
-                UnregisterHotKey(this.Handle, 2);
-
-                RegisterHotKey(this.Handle, 0, (int)_settings.KeyModifier1Value, _settings.Key1Value.GetHashCode());
-                RegisterHotKey(this.Handle, 1, (int)_settings.KeyModifier2Value, _settings.Key2Value.GetHashCode());
-                RegisterHotKey(this.Handle, 2, (int)_settings.KeyModifier3Value, _settings.Key3Value.GetHashCode());
+                UnregisterKeys();
+                RegisterKeys();
 
                 Task.Run(() =>
                 {
