@@ -10,7 +10,6 @@ namespace Sa7kaWin.Models
 {
     public class SettingInfo
     {
-        public int Id { get; set; }
         public bool OnStartUp { get; set; }
         public string KeyModifier1 { get; set; }
         public KeyModifier KeyModifier1Value

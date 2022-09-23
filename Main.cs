@@ -45,6 +45,11 @@ namespace Sa7kaWin
         private readonly SettingRepository _settingRepository;
         private SettingInfo _settings;
 
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WM_KEYDOWN = 0x0100;
+        private static readonly LowLevelKeyboardProc _proc = HookCallback;
+        private static IntPtr _hookID = IntPtr.Zero;
+
         public Main()
         {
             InitializeComponent();
@@ -54,11 +59,13 @@ namespace Sa7kaWin
         {
             try
             {
-                this.Text += " " + Application.ProductVersion;
+                this.Text += Application.ProductVersion;
                 this.Hide();
 
-                LoadSettings();
+                //LoadSettings();
+                //RegisterKeys();
 
+                _hookID = SetHook(_proc);
                 NotifyIcon.Visible = true;
                 NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
             }
@@ -67,6 +74,62 @@ namespace Sa7kaWin
                 MessageBox.Show(ex.Message);
             }
         }
+        private static IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc,
+                    GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+        private delegate IntPtr LowLevelKeyboardProc(
+       int nCode, IntPtr wParam, IntPtr lParam);
+        private static IntPtr HookCallback(
+        int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                if ((Keys)vkCode == Keys.Oem5/* && ModifierKeys == Keys.Shift*/)
+                {
+                    SendKeys.Flush();
+                    SendKeys.SendWait("^{HOME}");
+                    SendKeys.SendWait("^+{END}");
+                    //Thread.Sleep(800);
+
+                    SendKeys.SendWait("^X");
+                    Thread.Sleep(100);
+
+                    if (Clipboard.ContainsText())
+                    {
+                        var convertedText = Convert(Clipboard.GetText());
+
+                        //ChangeLanguage(InputLanguage.CurrentInputLanguage);
+                        SendKeys.SendWait("%+");
+                        SendKeys.SendWait(convertedText);
+                    }
+                }
+                //Console.WriteLine((Keys)vkCode);
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+    LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+            IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
+
         private async void LoadSettings()
         {
             _settings = await _settingRepository.GetSettings();
@@ -80,8 +143,6 @@ namespace Sa7kaWin
             TxtKeyModifier1.Text = _settings.KeyModifier1;
             TxtKeyModifier2.Text = _settings.KeyModifier2;
             TxtKeyModifier3.Text = _settings.KeyModifier3;
-
-            RegisterKeys();
         }
         private void BtnStart_Click(object sender, EventArgs e)
         {
@@ -119,7 +180,7 @@ namespace Sa7kaWin
             UnregisterHotKey(this.Handle, 1);
             UnregisterHotKey(this.Handle, 2);
         }
-        static string Convert(string input)
+        private static string Convert(string input)
         {
             string output = "";
             foreach (char c in input)
@@ -132,6 +193,25 @@ namespace Sa7kaWin
                     output += _arabic[_english.IndexOf(c)];
             }
             return output;
+        }
+        private static void ChangeLanguage(InputLanguage inputLanguage)
+        {
+            if (inputLanguage.Culture.Name.StartsWith("ar"))
+            {
+                var englishLanguage = InputLanguage.InstalledInputLanguages.OfType<InputLanguage>().Where(l => l.Culture.Name.StartsWith("en")).FirstOrDefault();
+                if (englishLanguage != null)
+                {
+                    InputLanguage.CurrentInputLanguage = englishLanguage;
+                }
+            }
+            else
+            {
+                var arabicLanguage = InputLanguage.InstalledInputLanguages.OfType<InputLanguage>().Where(l => l.Culture.Name.StartsWith("ar")).FirstOrDefault();
+                if (arabicLanguage != null)
+                {
+                    InputLanguage.CurrentInputLanguage = arabicLanguage;
+                }
+            }
         }
         private void Main_Resize(object sender, EventArgs e)
         {
@@ -177,22 +257,25 @@ namespace Sa7kaWin
 
                 if (m.Msg == 0x0312)
                 {
-                    Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
+                    //Keys key = (Keys)(((int)m.LParam >> 16) & 0xFFFF);
                     if (_start)
                     {
                         if (GetTextFromFocusedControl() == string.Empty)
                         {
-                            SendKeys.Send("^{HOME}");
+                            SendKeys.SendWait("^{HOME}");
                             Thread.Sleep(800);
                         }
 
-                        SendKeys.Send("^x");
+                        SendKeys.SendWait("^X");
                         Thread.Sleep(100);
 
                         if (Clipboard.ContainsText())
                         {
-                            SendKeys.SendWait(Convert(Clipboard.GetText()));
-                            SendKeys.Send("%+");
+                            var test = GetTextFromFocusedControl();
+                            var converted = Convert(test);
+
+                            SendKeys.SendWait(converted);
+                            SendKeys.SendWait("%+");
                         }
 
                         NotifyIcon.PopUp("Converted !", "We Saved You .. \n Sa7ka Killed!", 1000);
@@ -213,6 +296,7 @@ namespace Sa7kaWin
                 return;
             }
 
+            UnhookWindowsHookEx(_hookID);
             UnregisterKeys();
         }
         private void TxtShortcut_KeyDown(object sender, KeyEventArgs e)
@@ -358,7 +442,7 @@ namespace Sa7kaWin
         {
             await _settingRepository.UpdateSettings(_settings);
         }
-        private void NotifyIcon_Click(object sender, EventArgs e)
+        private void NotifyIcon_DoubleClick(object sender, EventArgs e)
         {
             Show();
             this.WindowState = FormWindowState.Normal;

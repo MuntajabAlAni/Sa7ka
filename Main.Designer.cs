@@ -84,7 +84,7 @@ namespace Sa7kaWin
             this.NotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("NotifyIcon.Icon")));
             this.NotifyIcon.Text = "Sa7ka";
             this.NotifyIcon.Visible = true;
-            this.NotifyIcon.Click += new System.EventHandler(this.NotifyIcon_Click);
+            this.NotifyIcon.DoubleClick += new System.EventHandler(this.NotifyIcon_DoubleClick);
             // 
             // ContextMenuStrip
             // 
@@ -316,7 +316,7 @@ namespace Sa7kaWin
             this.Name = "Main";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Sa7ka";
+            this.Text = "Sa7ka ";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
