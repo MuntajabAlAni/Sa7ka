@@ -23,11 +23,6 @@ namespace Sa7kaWin
                 File.WriteAllBytes(Application.StartupPath + "\\SQLite.Interop.dll", Properties.Resources.SQLite_Interop);
             }
 
-            if (!File.Exists(Application.StartupPath + "\\Sa7ka.db"))
-            {
-                File.WriteAllBytes(Application.StartupPath + "\\Sa7ka.db", Properties.Resources.Sa7ka);
-            }
-
             Application.Run(new Main());
         }
     }
