@@ -2,6 +2,15 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Sa7kaWin/v16/.suo
+/.vs/
 /bin/Debug
-/obj/Debug
+/obj/
+obj/
+# Ignore Visual Studio files
+.vs/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+packages/
+/packages/
