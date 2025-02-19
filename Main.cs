@@ -1,4 +1,5 @@
 ﻿using IWshRuntimeLibrary;
+using NLog;
 using Sa7kaWin.Extensions;
 using System;
 using System.Diagnostics;
@@ -26,6 +27,7 @@ namespace Sa7kaWin
         private bool _start = true;
         private static readonly string _english = "`qwertyuiop[]asdfghjkl;'zxcvbnm,./";
         private static readonly string _arabic = "ذضصثقفغعهخحجدشسيبلاتنمكطئءؤرلىةوزظ";
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Main()
         {
@@ -39,13 +41,15 @@ namespace Sa7kaWin
                 this.Hide();
 
                 RegisterKeys();
+                CbStartApplicationOnStartUp.Checked = CheckIfApplicationOnStartUp();
 
                 NotifyIcon.Visible = true;
                 NotifyIcon.PopUp("Sa7ka", "Sa7ka is running Minimized, \n You can open it by double click on the tray icon", 1000);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger.Error(ex, "An error occurred");
+                MessageBox.Show("An error occurred. Please check the logs for more details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -70,9 +74,9 @@ namespace Sa7kaWin
         }
         private void RegisterKeys()
         {
-                RegisterHotKey(this.Handle, 0, 2/* For Control Key */, Keys.F1.GetHashCode());
-                RegisterHotKey(this.Handle, 1, 2, Keys.F2.GetHashCode());
-                RegisterHotKey(this.Handle, 2, 2, Keys.F3.GetHashCode());
+            RegisterHotKey(this.Handle, 0, 2/* For Control Key */, Keys.F1.GetHashCode());
+            RegisterHotKey(this.Handle, 1, 2, Keys.F2.GetHashCode());
+            RegisterHotKey(this.Handle, 2, 2, Keys.F3.GetHashCode());
         }
         private void UnregisterKeys()
         {
@@ -85,7 +89,7 @@ namespace Sa7kaWin
             string output = "";
             foreach (char c in input)
             {
-                if (c == ' ')
+                if (c == ' ' || !_arabic.Contains(c))
                     output += c;
                 else
                     output += _english[_arabic.IndexOf(c)];
@@ -97,7 +101,7 @@ namespace Sa7kaWin
             string output = "";
             foreach (char c in input)
             {
-                if (c == ' ')
+                if (c == ' ' || !_english.Contains(c))
                     output += c;
                 else
                     output += _arabic[_english.IndexOf(c)];
@@ -155,16 +159,18 @@ namespace Sa7kaWin
                             var test = Clipboard.GetText();
                             string converted = "";
 
-                            if(key == Keys.F1)
-                            {
-                                converted = ConvertToEnglish(test);
-                            }
-                            else if(key == Keys.F2)
+                            if (key == Keys.F1)
                             {
                                 converted = ConvertToArabic(test);
                             }
+                            else if (key == Keys.F2)
+                            {
+                                converted = ConvertToEnglish(test);
+                            }
 
                             Clipboard.SetText(converted);
+                            Thread.Sleep(500);
+                            SendKeys.SendWait("^V");
                             Thread.Sleep(500);
                             SendKeys.SendWait("%+");
                         }
@@ -175,7 +181,8 @@ namespace Sa7kaWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger.Error(ex, "An error occurred");
+                MessageBox.Show("An error occurred. Please check the logs for more details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
@@ -231,8 +238,15 @@ namespace Sa7kaWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Logger.Error(ex, "An error occurred");
+                MessageBox.Show("An error occurred. Please check the logs for more details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private bool CheckIfApplicationOnStartUp()
+        {
+            string startUpFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+            return System.IO.File.Exists(startUpFolderPath + "\\" + Application.ProductName + ".lnk");
         }
 
         private void NotifyIcon_DoubleClick(object sender, EventArgs e)

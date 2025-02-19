@@ -5,13 +5,14 @@ D:\Dev\Sa7ka\bin\Release\Dapper.dll
 D:\Dev\Sa7ka\bin\Release\System.Data.SQLite.dll
 D:\Dev\Sa7ka\bin\Release\Dapper.xml
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.AssemblyReference.cache
-D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.SuggestedBindingRedirects.cache
 D:\Dev\Sa7ka\obj\Release\Interop.IWshRuntimeLibrary.dll
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.ResolveComReference.cache
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.Main.resources
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.Properties.Resources.resources
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.GenerateResource.cache
 D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.CoreCompileInputs.cache
-D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.CopyComplete
 D:\Dev\Sa7ka\obj\Release\Sa7ka.exe
 D:\Dev\Sa7ka\obj\Release\Sa7ka.pdb
+D:\Dev\Sa7ka\bin\Release\NLog.dll
+D:\Dev\Sa7ka\bin\Release\NLog.xml
+D:\Dev\Sa7ka\obj\Release\Sa7kaWin.csproj.Up2Date
