@@ -20,7 +20,7 @@ and convert it to the correct language depending on the captured hotkey. It’s 
 
 ## Installation
 
-1. **Download the ZIP** containing the Release build from the [Releases section](https://github.com/MuntajabAlAni/Sa7kaWin/releases).
+1. **Download the ZIP** containing the Release build from the [Releases section](https://github.com/MuntajabAlAni/Sa7ka/releases/download/v1.0/Sa7ka-v1.0.zip).
 2. **Extract the ZIP** to a folder of your choice.
 3. **Run the application** by double-clicking on `Sa7kaWin.exe`.
 4. The app will start running in the system tray. Use the hotkey `Ctrl+F2` to test it!
