@@ -1,4 +1,4 @@
-# Sa7ka - Clipboard Hotkey App
+# Sa7ka
 
 **Sa7ka** is a simple Windows application that allows you to use hotkeys (Ctrl + F2 or F3) to capture the text that the user is typing in a wrong language selected (and another language wanted) from AR and EN only.
 and convert it to the correct language depending on the captured hotkey. It’s designed to make it easier to fix typos and annoying required changes for language when typing some stuff.
