@@ -74,20 +74,18 @@ namespace Sa7kaWin
         }
         private void RegisterKeys()
         {
-            RegisterHotKey(this.Handle, 0, 2/* For Control Key */, Keys.F1.GetHashCode());
-            RegisterHotKey(this.Handle, 1, 2, Keys.F2.GetHashCode());
-            RegisterHotKey(this.Handle, 2, 2, Keys.F3.GetHashCode());
+            RegisterHotKey(this.Handle, 0, 2, Keys.F2.GetHashCode());
+            RegisterHotKey(this.Handle, 1, 2, Keys.F3.GetHashCode());
         }
         private void UnregisterKeys()
         {
             UnregisterHotKey(this.Handle, 0);
             UnregisterHotKey(this.Handle, 1);
-            UnregisterHotKey(this.Handle, 2);
         }
         private static string ConvertToEnglish(string input)
         {
             string output = "";
-            foreach (char c in input)
+            foreach (char c in input.ToLower())
             {
                 if (c == ' ' || !_arabic.Contains(c))
                     output += c;
@@ -99,7 +97,7 @@ namespace Sa7kaWin
         private static string ConvertToArabic(string input)
         {
             string output = "";
-            foreach (char c in input)
+            foreach (char c in input.ToLower())
             {
                 if (c == ' ' || !_english.Contains(c))
                     output += c;
@@ -159,11 +157,11 @@ namespace Sa7kaWin
                             var test = Clipboard.GetText();
                             string converted = "";
 
-                            if (key == Keys.F1)
+                            if (key == Keys.F2)
                             {
                                 converted = ConvertToArabic(test);
                             }
-                            else if (key == Keys.F2)
+                            else if (key == Keys.F3)
                             {
                                 converted = ConvertToEnglish(test);
                             }
