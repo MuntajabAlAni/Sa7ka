@@ -40,4 +40,4 @@ Feel free to fork this repository and submit issues or pull requests with improv
 
 ## License
 
-This project is open-source and available under the MIT License. See the [LICENSE](LICENSE) file for more information.
+This project is open-source and available under the MIT License.
